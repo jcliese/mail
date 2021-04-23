@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -8,17 +9,24 @@ class User(AbstractUser):
 
 class Listing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Listings")
-    title = models.CharField(max_length=256)
-    description = models.CharField(max_length=1024)
+    listing_title = models.CharField(max_length=256)
+    img = models.ImageField(upload_to = "images/", default='default.jpg')
+    min_price = models.FloatField(default=1.0)
+    description = models.TextField()
     category = models.CharField(max_length=64)
+    pub_date = models.DateField(default=timezone.now)
+
+    def __str__(self):
+        return self.listing_title
 
 class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Bids")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="Bids")
-    price = models.FloatField()
-    bid_date = models.DateField()
+    price = models.FloatField(default=0.0)
+    bid_date = models.DateField(default=timezone.now)
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Comments")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="Comments")
-    comment = models.CharField(max_length=2048)
+    comment = models.TextField()
+    pub_date = models.DateField(default=timezone.now)

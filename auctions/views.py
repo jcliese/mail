@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Listing
 
 
 def index(request):
@@ -61,3 +62,21 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+@login_required
+def new(request):
+    if request.method=="POST":
+
+        username = request.user.username
+        user = User.objects.get(username=username)
+
+        listing_title = request.POST.get("listing_title")
+        min_price = request.POST.get("min_price")
+        description = request.POST.get("description")
+        category = request.POST.get("category")
+        print("IMAGE", request.FILES)
+
+        new_listing = Listing(listing_title=listing_title, min_price=min_price, description=description, user=user, category=category)
+        new_listing.save()
+
+    return render(request, "auctions/new.html")
