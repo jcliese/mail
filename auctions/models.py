@@ -7,10 +7,13 @@ class User(AbstractUser):
     pass
 
 
+def user_directory_path(instance, filename):
+    return 'images/user_{0}/{1}'.format(instance.user.id, filename)
+
 class Listing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Listings")
     listing_title = models.CharField(max_length=256)
-    imgfile = models.ImageField(upload_to = "images/%Y/%m/%d", default='default.jpg')
+    imgfile = models.ImageField(upload_to = user_directory_path, default='default.jpg')
     min_price = models.FloatField(default=1.0)
     description = models.TextField()
     category = models.CharField(max_length=64)
