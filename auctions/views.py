@@ -73,7 +73,10 @@ def new(request):
         form = ImageForm(request.POST, request.FILES)
         if form.is_valid():
             listing_title = request.POST.get("listing_title")
-            imgfile = request.FILES['imgfile']
+            if not request.FILES:
+                imgfile = None
+            else:
+                imgfile = request.FILES['imgfile']
             min_price = request.POST.get("min_price")
             description = request.POST.get("description")
             category = request.POST.get("category")
