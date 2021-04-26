@@ -10,7 +10,7 @@ class User(AbstractUser):
 class Listing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Listings")
     listing_title = models.CharField(max_length=256)
-    img = models.ImageField(upload_to = "images/", default='default.jpg')
+    imgfile = models.ImageField(upload_to = "images/%Y/%m/%d", default='default.jpg')
     min_price = models.FloatField(default=1.0)
     description = models.TextField()
     category = models.CharField(max_length=64)

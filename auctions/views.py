@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Listing
-
+from .forms import ImageForm
 
 def index(request):
     return render(request, "auctions/index.html")
@@ -70,13 +70,17 @@ def new(request):
         username = request.user.username
         user = User.objects.get(username=username)
 
-        listing_title = request.POST.get("listing_title")
-        min_price = request.POST.get("min_price")
-        description = request.POST.get("description")
-        category = request.POST.get("category")
-        print("IMAGE", request.FILES)
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            listing_title = request.POST.get("listing_title")
+            imgfile = request.FILES['imgfile']
+            min_price = request.POST.get("min_price")
+            description = request.POST.get("description")
+            category = request.POST.get("category")
+            new_listing = Listing(listing_title=listing_title, imgfile=imgfile, min_price=min_price, description=description, user=user, category=category)
+            new_listing.save()
 
-        new_listing = Listing(listing_title=listing_title, min_price=min_price, description=description, user=user, category=category)
-        new_listing.save()
+    else:
+        form = ImageForm()        
 
-    return render(request, "auctions/new.html")
+    return render(request, "auctions/new.html", {'form' : form})
