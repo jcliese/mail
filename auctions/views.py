@@ -84,6 +84,7 @@ def new(request):
             new_listing.save()
 
     else:
-        form = ImageForm()        
+        form = ImageForm()
+        print("FORM", form)
 
-    return render(request, "auctions/new.html", {'form' : form})
+    return render(request, "auctions/new2.html", {'form' : form})
