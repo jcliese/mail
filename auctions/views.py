@@ -82,9 +82,9 @@ def new(request):
             category = request.POST.get("category")
             new_listing = Listing(listing_title=listing_title, imgfile=imgfile, min_price=min_price, description=description, user=user, category=category)
             new_listing.save()
+            return HttpResponseRedirect(reverse("index"))
 
     else:
         form = ImageForm()
-        print("FORM", form)
 
-    return render(request, "auctions/new2.html", {'form' : form})
+    return render(request, "auctions/new.html", {'form' : form})

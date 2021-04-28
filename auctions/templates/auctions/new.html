@@ -1,43 +1,34 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Create a New Listing</h2>
+    <div class="form_wrapper">
+        <h2>Create a New Listing</h2>
 
-    <form action="{% url 'new' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="hidden" name="user" value="{{ user.username }}">
-        <div>
-            <label for="listing_title">Title:</label><br>
-            <input class="form-control" name="listing_title" type="text" placeholder="Title">
-        </div><br>
-        <div class="form-group">
-            <label for="image_upload">Please upload an image</label>
-             {{ form.imgfile }}
-          </div>
-        <div>
-            <label for="min_price">Min Price:</label><br>
-            <input class="form-control" name="min_price" type="number" step="0.10">
-        </div><br>
-        <div class="form-group">
-            <label for="description">Description:</label>
-            <textarea class="form-control" name="description" rows="3" placeholder="Description"></textarea>
-        </div>
-        <div>
-            <label for="category">Category:</label><br>
-            <select class="form-control" name="category">
-                <option value="books">Books</option>
-                <option value="dvd">DVDs</option>
-                <option value="electronics">Electronics</option>
-                <option value="fashion">Fashion</option>
-                <option value="home">Home</option>
-                <option value="office">Office</option>
-                <option value="pet">Pet Supplies</option>
-                <option value="shoes">Shoes</option>
-                <option value="software">Software</option>
-                <option value="toys">Toys</option>
-            </select>        
-        </div>
-        <br>
-        <button type="submit" class="btn btn-info">Submit</button>
-    </form>
+        <form action="{% url 'new' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="user" value="{{ user.username }}">
+            <div>
+                <label for="listing_title">Title:</label><br>
+                {{ form.listing_title }}
+            </div><br>
+            <div class="form-group">
+                <label for="image_upload">Please upload an image</label>
+                {{ form.imgfile }}
+            </div>
+            <div>
+                <label for="min_price">Min Price:</label><br>
+                {{ form.min_price }}
+            </div><br>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                {{ form.description }}
+            </div>
+            <div>
+                <label for="category">Category:</label><br>
+                {{ form.category }}        
+            </div>
+            <br>
+            <button type="submit" class="btn btn-info">Submit</button>
+        </form>
+    </div>
 {% endblock %}
