@@ -17,7 +17,7 @@ class Listing(models.Model):
     min_price = models.FloatField(default=1.0)
     description = models.TextField()
     category = models.CharField(max_length=64)
-    pub_date = models.DateField(default=timezone.now)
+    pub_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.listing_title

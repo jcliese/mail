@@ -2,13 +2,46 @@ body {
     padding: 10px;
 }
 
-.form_wrapper {
+.body_wrapper {
     width: 60%;
     margin: 0 auto;
 }
 
-@media only screen and (max-width: 768px) {
-    .form_wrapper {
+.body_wrapper>a {
+  color: black;
+  text-decoration: none;
+}
+
+@media only screen and (max-width: 1240px) {
+    .body_wrapper {
       width: 100%;
     }
   }
+
+.card-body {
+  margin: 0px
+}
+
+.card-body > img {
+  width: 320px;
+  padding: 0px 35px 0px 35px;
+}
+
+@media only screen and (max-width: 768px) {
+  .card-body > img  {
+    width: 240px;
+    padding: 0px;
+  }
+}
+
+.card-body.listing {
+  display: flex;
+}
+
+.description {
+  white-space: pre-wrap;
+}
+
+.listing_data {
+  width: 100%;
+}

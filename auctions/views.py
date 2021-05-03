@@ -9,7 +9,15 @@ from .models import User, Listing, user_directory_path
 from .forms import ImageForm
 
 def index(request):
-    return render(request, "auctions/index.html")
+    username = request.user.username
+    user = User.objects.get(username=username)
+    listings = Listing.objects.filter(user=user)
+    for listing in listings:
+        print("TIME", listing.pub_date)
+    return render(request, "auctions/index.html", {
+        "listings": listings,
+        "user_id": request.user.id
+    })
 
 
 def login_view(request):
@@ -88,3 +96,7 @@ def new(request):
         form = ImageForm()
 
     return render(request, "auctions/new.html", {'form' : form})
+
+def listing(request):
+    listing = Listing.objects.get(id=id)
+    return render(request, "auctions/listing.html", {"listing", listing})

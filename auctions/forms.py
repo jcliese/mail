@@ -13,7 +13,7 @@ software = "software"
 toys = "toys"
 unassigned = "unassigned"
 
-categories = [(books, "Books"), (dvd, "Dvd"), (electronics, "Electronics"), (fashion, "Fashion"), (home, "Home"), (office, "Office"), (pet, "Pet"), (shoes, "Shoes"), (software, "Software"), (toys, "Toys"), (unassigned, "Unassigned")]
+categories = [(books, "Books"), (dvd, "DVD"), (electronics, "Electronics"), (fashion, "Fashion"), (home, "Home"), (office, "Office"), (pet, "Pet"), (shoes, "Shoes"), (software, "Software"), (toys, "Toys"), (unassigned, "Unassigned")]
 
 
 class ImageForm(forms.Form):
