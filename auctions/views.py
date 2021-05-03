@@ -97,6 +97,11 @@ def new(request):
 
     return render(request, "auctions/new.html", {'form' : form})
 
-def listing(request):
-    listing = Listing.objects.get(id=id)
-    return render(request, "auctions/listing.html", {"listing", listing})
+def listing(request, id):
+    try:
+        listing = Listing.objects.get(id=id)
+    except Content.DoesNotExist:
+        listing = None
+
+    
+    return render(request, "auctions/listing.html", {"listing": listing})

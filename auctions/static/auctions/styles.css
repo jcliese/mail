@@ -1,5 +1,6 @@
 body {
     padding: 10px;
+    height: 100%;
 }
 
 .body_wrapper {
@@ -19,7 +20,8 @@ body {
   }
 
 .card-body {
-  margin: 0px
+  margin: 0px;
+  height: 100%;
 }
 
 .card-body > img {
@@ -38,10 +40,30 @@ body {
   display: flex;
 }
 
+.card-body.listing_detail {
+  display: flex;
+  flex-direction: column;
+}
+.card-body.listing_detail > img {
+  object-fit: contain;
+  max-width: 75%;
+  max-height: 60vh;
+  width: auto;
+  height: auto;
+}
+@media only screen and (max-width: 768px) {
+  .card-body.listing_detail > img {
+    max-width: 100%;
+  }
+}
+
 .description {
   white-space: pre-wrap;
 }
 
 .listing_data {
   width: 100%;
+}
+.listing_detail > .listing_data {
+  margin-left: 3%;
 }

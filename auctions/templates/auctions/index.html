@@ -6,7 +6,7 @@
 
         {% if listings %}
             {% for listing in listings %}
-            <a href="{% url 'listing'%}"">
+            <a href="{% url 'listing' listing.id %}"">
             <div class="card">
                 <div class="card-body listing">
                     {% if listing.imgfile %}
@@ -25,7 +25,7 @@
             </div>
             </a>
             <br>
-            {% endfor %}div 
+            {% endfor %}
         {% else %}
 
             <p>No Listings</p>
