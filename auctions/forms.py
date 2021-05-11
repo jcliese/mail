@@ -22,3 +22,4 @@ class ImageForm(forms.Form):
     min_price = forms.FloatField(min_value=1.0, widget=forms.NumberInput(attrs={'class': 'form-control'}))
     description = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}))
     category = forms.ChoiceField(choices=categories, initial="unassigned", widget=forms.Select(attrs={'class': 'form-control'}))
+    days = forms.IntegerField(max_value=21, min_value=1, widget=forms.NumberInput(attrs={'class': 'form-control'}))

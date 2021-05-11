@@ -13,7 +13,7 @@ def index(request):
     user = User.objects.get(username=username)
     listings = Listing.objects.filter(user=user)
     for listing in listings:
-        print("TIME", listing.pub_date)
+        print("TIME", listing.time_starting)
     return render(request, "auctions/index.html", {
         "listings": listings,
         "user_id": request.user.id
@@ -88,7 +88,8 @@ def new(request):
             min_price = request.POST.get("min_price")
             description = request.POST.get("description")
             category = request.POST.get("category")
-            new_listing = Listing(listing_title=listing_title, imgfile=imgfile, min_price=min_price, description=description, user=user, category=category)
+            days_added = request.POST.get("days")
+            new_listing = Listing(listing_title=listing_title, imgfile=imgfile, min_price=min_price, description=description, user=user, category=category, days_added=days_added)
             new_listing.save()
             return HttpResponseRedirect(reverse("index"))
 

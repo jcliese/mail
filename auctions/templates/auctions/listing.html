@@ -4,16 +4,18 @@
     <div class="body_wrapper">
         <div class="card">
             <div class="card-body listing_detail">
+                <div class="listing_data">
+                    <h1 class="display-4">{{ listing.listing_title }}</h1>
+                </div>
                 {% if listing.imgfile %}
                     <img src="../media/{{listing.imgfile}}" class="mr-3" alt="{{listing.listing_title}}">
                 {% else %}
                     <img src="media/default.png" class="mr-3" alt="{{listing.listing_title}}">
                 {% endif %}
                 <div class="listing_data">
-                    <h1>{{ listing.listing_title }}</h1>
-                    <p><b>Price:</b> {{ listing.min_price|floatformat:2 }}€</p>
                     <div class="description">{{listing.description}}</div><br>
-                    <small class="text-muted">Created {{listing.pub_date}}</small>
+                    <h4><b>Price:</b> {{ listing.min_price|floatformat:2 }}€</h4>
+                    <small class="text-muted">Created {{listing.time_starting}}</small>
                 </div>
 
             </div>
