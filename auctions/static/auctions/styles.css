@@ -24,15 +24,17 @@ body {
   height: 100%;
 }
 
-.card-body > img {
+.listing_img {
   width: 320px;
-  padding: 0px 35px 0px 35px;
+  padding: 0px;
+  margin: 15px 0px 15px 0px;
 }
 
 @media only screen and (max-width: 768px) {
-  .card-body > img  {
+  .listing_img  {
     width: 240px;
     padding: 0px;
+    margin: 0px;
   }
 }
 

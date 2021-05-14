@@ -5,15 +5,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing, user_directory_path
+from .models import User, Listing, Watchlist, user_directory_path
 from .forms import ImageForm
 
 def index(request):
-    username = request.user.username
-    user = User.objects.get(username=username)
-    listings = Listing.objects.filter(user=user)
-    for listing in listings:
-        print("TIME", listing.time_starting)
+    listings = Listing.objects.all()
+    listings = listings[::-1]
     return render(request, "auctions/index.html", {
         "listings": listings,
         "user_id": request.user.id
@@ -88,8 +85,7 @@ def new(request):
             min_price = request.POST.get("min_price")
             description = request.POST.get("description")
             category = request.POST.get("category")
-            days_added = request.POST.get("days")
-            new_listing = Listing(listing_title=listing_title, imgfile=imgfile, min_price=min_price, description=description, user=user, category=category, days_added=days_added)
+            new_listing = Listing(listing_title=listing_title, imgfile=imgfile, min_price=min_price, description=description, user=user, category=category)
             new_listing.save()
             return HttpResponseRedirect(reverse("index"))
 
@@ -101,8 +97,22 @@ def new(request):
 def listing(request, id):
     try:
         listing = Listing.objects.get(id=id)
-    except Content.DoesNotExist:
+    except Listing.DoesNotExist:
         listing = None
-
     
-    return render(request, "auctions/listing.html", {"listing": listing})
+    on_watchlist = Watchlist.objects.filter(user_id=request.user.id, listing_id=id).exists()
+    
+    return render(request, "auctions/listing.html", {"listing": listing, "on_watchlist": on_watchlist})
+
+@login_required
+def watchlist(request, id):
+    if request.method=="POST":
+        user = User.objects.get(username=request.user.username)
+        listing = Listing.objects.get(id=id)
+        on_watchlist = Watchlist.objects.filter(user_id=user, listing_id=id).exists()
+        if not on_watchlist:
+            entry = Watchlist(user_id=request.user, listing_id=listing)
+            entry.save()
+        else:
+            Watchlist.objects.filter(user_id=user.id, listing_id=listing.id).delete()
+    return HttpResponseRedirect(reverse("listing", args=(listing.id,)))

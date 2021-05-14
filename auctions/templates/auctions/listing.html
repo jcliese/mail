@@ -6,16 +6,37 @@
             <div class="card-body listing_detail">
                 <div class="listing_data">
                     <h1 class="display-4">{{ listing.listing_title }}</h1>
+                    {% if on_watchlist %}
+                        <button type="button" class="btn btn-outline-secondary btn-sm" disabled>Watchlist</button>
+                        <br>
+                    {% endif %}
+
                 </div>
                 {% if listing.imgfile %}
-                    <img src="../media/{{listing.imgfile}}" class="mr-3" alt="{{listing.listing_title}}">
+                    <img src="../media/{{listing.imgfile}}" class="mr-3 listing_img" alt="{{listing.listing_title}}">
                 {% else %}
-                    <img src="media/default.png" class="mr-3" alt="{{listing.listing_title}}">
+                    <img src="../media/default.png" class="mr-3 listing_img" alt="{{listing.listing_title}}">
                 {% endif %}
                 <div class="listing_data">
                     <div class="description">{{listing.description}}</div><br>
                     <h4><b>Price:</b> {{ listing.min_price|floatformat:2 }}€</h4>
                     <small class="text-muted">Created {{listing.time_starting}}</small>
+                    <br>
+                    {% if user.is_authenticated %}
+                        {% if on_watchlist %}
+                            <form action="{% url 'watchlist' listing.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="submit" class="btn btn-warning" value="Remove from Watchlist">
+                            </form>
+                            <br>
+                        {% else %}
+                            <form action="{% url 'watchlist' listing.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="submit" class="btn btn-success" value="Watchlist">
+                            </form>
+                            <br>
+                        {% endif %}
+                    {% endif %}
                 </div>
 
             </div>

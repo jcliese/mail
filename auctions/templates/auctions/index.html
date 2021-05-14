@@ -10,9 +10,9 @@
             <div class="card">
                 <div class="card-body listing">
                     {% if listing.imgfile %}
-                        <img src="media/{{listing.imgfile}}" class="mr-3" alt="{{listing.listing_title}}">
+                        <img src="media/{{listing.imgfile}}" class="mr-3 listing_img" alt="{{listing.listing_title}}">
                     {% else %}
-                        <img src="media/default.png" class="mr-3" alt="{{listing.listing_title}}">
+                        <img src="media/default.png" class="mr-3 listing_img" alt="{{listing.listing_title}}">
                     {% endif %}
                     <div class="listing_data">
                         <h1>{{ listing.listing_title }}</h1>
