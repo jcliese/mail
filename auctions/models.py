@@ -29,14 +29,14 @@ class Listing(models.Model):
         return self.listing_title    
 
 class Bid(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bidder")
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bidder")
+    listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
     price = models.FloatField(default=0.0)
     bid_date = models.DateField(default=timezone.now)
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commentator")
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="Comments")
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
     comment = models.TextField()
     time_sent = models.DateField(default=timezone.now)
 

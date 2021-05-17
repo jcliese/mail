@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing, Watchlist, user_directory_path
+from .models import User, Listing, Bid, Watchlist
 from .forms import ImageForm, BidForm
 
 def index(request):
@@ -123,6 +123,9 @@ def bid(request, id):
     if request.method=="POST":
         user = User.objects.get(username=request.user.username)
         listing = Listing.objects.get(id=id)
+        all_bids = Bid.objects.filter(listing_id=id)
+        print("allBIDS", all_bids)
         bid_price = request.POST.get("bid_price")
-        print('PRICE', bid_price)
+        new_bid = Bid(user_id=request.user, listing_id=listing, price=bid_price)
+        new_bid.save()
     return HttpResponseRedirect(reverse("listing", args=(listing.id,)))

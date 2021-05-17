@@ -28,7 +28,7 @@ class BidForm(forms.Form):
         # call standard __init__
         super().__init__()
         #extend __init__
-        min_val=min_price
+        min_val=min_price+1
         self.fields["bid_price"] = forms.FloatField(min_value=min_val, widget=forms.NumberInput(attrs={'class': 'form-control', 'name': 'bid_price'}))
 
     bid_price = forms.FloatField()
