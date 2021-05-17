@@ -24,4 +24,11 @@ class ImageForm(forms.Form):
     category = forms.ChoiceField(choices=categories, initial="unassigned", widget=forms.Select(attrs={'class': 'form-control'}))
 
 class BidForm(forms.Form):
-    bid_price = forms.FloatField(min_value=1.0, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    def __init__(self,min_price):
+        # call standard __init__
+        super().__init__()
+        #extend __init__
+        min_val=min_price
+        self.fields["bid_price"] = forms.FloatField(min_value=min_val, widget=forms.NumberInput(attrs={'class': 'form-control', 'name': 'bid_price'}))
+
+    bid_price = forms.FloatField()

@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Listing, Watchlist, user_directory_path
-from .forms import ImageForm
+from .forms import ImageForm, BidForm
 
 def index(request):
     listings = Listing.objects.all()
@@ -102,7 +102,8 @@ def listing(request, id):
     
     on_watchlist = Watchlist.objects.filter(user_id=request.user.id, listing_id=id).exists()
     
-    return render(request, "auctions/listing.html", {"listing": listing, "on_watchlist": on_watchlist})
+    bid_form = BidForm(listing.min_price)
+    return render(request, "auctions/listing.html", {"listing": listing, "on_watchlist": on_watchlist, "bid_form": bid_form})
 
 @login_required
 def watchlist(request, id):
@@ -115,4 +116,13 @@ def watchlist(request, id):
             entry.save()
         else:
             Watchlist.objects.filter(user_id=user.id, listing_id=listing.id).delete()
+    return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+
+@login_required
+def bid(request, id):
+    if request.method=="POST":
+        user = User.objects.get(username=request.user.username)
+        listing = Listing.objects.get(id=id)
+        bid_price = request.POST.get("bid_price")
+        print('PRICE', bid_price)
     return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
