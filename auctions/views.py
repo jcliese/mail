@@ -11,6 +11,15 @@ from .forms import ImageForm, BidForm
 def index(request):
     listings = Listing.objects.all()
     listings = listings[::-1]
+    for listing in listings:
+        bids = Bid.objects.filter(listing_id=listing.id).values_list('price', flat=True).order_by('-id')
+        if bids:
+            current_price = bids[0]
+        else:
+            current_price = listing.min_price
+
+        listing.current_price = current_price
+
     return render(request, "auctions/index.html", {
         "listings": listings,
         "user_id": request.user.id
@@ -101,9 +110,10 @@ def listing(request, id):
         listing = None
     
     on_watchlist = Watchlist.objects.filter(user_id=request.user.id, listing_id=id).exists()
+    current_price = Bid.objects.filter(listing_id=id).values_list('price', flat=True).order_by('-id')[0]
     
     bid_form = BidForm(listing.min_price)
-    return render(request, "auctions/listing.html", {"listing": listing, "on_watchlist": on_watchlist, "bid_form": bid_form})
+    return render(request, "auctions/listing.html", {"listing": listing, "on_watchlist": on_watchlist, "bid_form": bid_form, "current_price": current_price})
 
 @login_required
 def watchlist(request, id):

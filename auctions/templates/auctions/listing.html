@@ -19,7 +19,7 @@
                 {% endif %}
                 <div class="listing_data">
                     <div class="description">{{listing.description}}</div><br>
-                    <h4><b>Price:</b> {{ listing.min_price|floatformat:2 }}€</h4>
+                    <h4><b>Price:</b> {{ current_price|floatformat:2 }}€</h4>
                     <small class="text-muted">Created {{listing.time_starting}}</small>
                     <br>
                     {% if user.is_authenticated %}
