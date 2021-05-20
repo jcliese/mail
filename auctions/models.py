@@ -24,6 +24,7 @@ class Listing(models.Model):
     category = models.CharField(max_length=64)
     time_starting = models.DateTimeField(default=timezone.now)
     time_ending = models.DateTimeField(default=ending_date)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.listing_title    

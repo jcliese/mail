@@ -65,6 +65,7 @@ body {
 
 .listing_data {
   width: 100%;
+  padding: 0% 10% 0% 0%;
 }
 .listing_detail > .listing_data {
   margin-left: 3%;

@@ -4,12 +4,21 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils import timezone
 
 from .models import User, Listing, Bid, Watchlist
 from .forms import ImageForm, BidForm
 
-def index(request):
+def check_active():
     listings = Listing.objects.all()
+    for listing in listings:
+        if listing.time_ending < timezone.now():
+            listing.is_active = False
+            listing.save()
+
+def index(request):
+    check_active()
+    listings = Listing.objects.filter(is_active=True)
     listings = listings[::-1]
     for listing in listings:
         bids = Bid.objects.filter(listing_id=listing.id).values_list('price', flat=True).order_by('-id')
@@ -104,16 +113,29 @@ def new(request):
     return render(request, "auctions/new.html", {'form' : form})
 
 def listing(request, id):
+    check_active()
     try:
         listing = Listing.objects.get(id=id)
     except Listing.DoesNotExist:
         listing = None
     
     on_watchlist = Watchlist.objects.filter(user_id=request.user.id, listing_id=id).exists()
-    current_price = Bid.objects.filter(listing_id=id).values_list('price', flat=True).order_by('-id')[0]
+    is_creator = Watchlist.objects.filter(user_id=request.user.id, listing_id=id).exists()
+
+    bids = Bid.objects.filter(listing_id=listing.id).order_by('-id')
+    if bids:
+        current_price = bids.values_list('price', flat=True)[0]
+        highest_bidder = bids.values_list('user_id', flat=True)[0]
+    else:
+        current_price = listing.min_price
+        highest_bidder = None
+    listing.current_price = current_price
+    listing.highest_bidder = highest_bidder
+
+    print(listing.highest_bidder)
     
     bid_form = BidForm(listing.min_price)
-    return render(request, "auctions/listing.html", {"listing": listing, "on_watchlist": on_watchlist, "bid_form": bid_form, "current_price": current_price})
+    return render(request, "auctions/listing.html", {"listing": listing, "on_watchlist": on_watchlist, "bid_form": bid_form, "user": request.user, "numb_bids": len(bids), })
 
 @login_required
 def watchlist(request, id):
@@ -134,8 +156,16 @@ def bid(request, id):
         user = User.objects.get(username=request.user.username)
         listing = Listing.objects.get(id=id)
         all_bids = Bid.objects.filter(listing_id=id)
-        print("allBIDS", all_bids)
         bid_price = request.POST.get("bid_price")
         new_bid = Bid(user_id=request.user, listing_id=listing, price=bid_price)
         new_bid.save()
+    return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+
+@login_required
+def close(request, id):
+    if request.method=="POST":
+        print("i want to close", id)
+        listing = Listing.objects.get(id=id)
+        listing.is_active = False
+        listing.save()
     return HttpResponseRedirect(reverse("listing", args=(listing.id,)))

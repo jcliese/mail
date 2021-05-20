@@ -19,7 +19,7 @@
                 {% endif %}
                 <div class="listing_data">
                     <div class="description">{{listing.description}}</div><br>
-                    <h4><b>Price:</b> {{ current_price|floatformat:2 }}€</h4>
+                    <h4><b>Price:</b> {{ listing.current_price|floatformat:2 }}€</h4>
                     <small class="text-muted">Created {{listing.time_starting}}</small>
                     <br>
                     {% if user.is_authenticated %}
@@ -36,11 +36,33 @@
                             </form>
                             <br>
                         {% endif %}
-                        <form action="{% url 'bid' listing.id %}" method="post">
+                        {% if listing.is_active %}
+                            <p>{{numb_bids}} bid(s) so far.{% if user.id == listing.highest_bidder %} Your bid is the current bid.{% endif %}</p>
+                            <form action="{% url 'bid' listing.id %}" method="post">
+                                {% csrf_token %}
+                                {{ bid_form.bid_price }}
+                                <br>
+                                <input type="submit" class="btn btn-info" value="Place Bid">
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                    <br>
+                    <h4>Details</h4>
+                    <ul>
+                        <li>Listed by: <em>{{listing.user}}</em></li>
+                        <li>Category: {{listing.category}}</li>
+                    </ul>
+                    {% if user.username == listing.user.username and listing.is_active %}
+                        <form action="{% url 'close' listing.id %}" method="post">
                             {% csrf_token %}
-                            {{ bid_form.bid_price }}
-                            <input type="submit" class="btn btn-info" value="Bid">
+                            <input type="submit" class="btn btn-danger" value="Close this auction">
                         </form>
+                        <br>
+                    {% endif%}
+                    {% if user.id == listing.highest_bidder and not listing.is_active %}
+                        <div class="alert alert-success" role="alert">
+                            Congratulations! You have won this auction!
+                        </div>
                     {% endif %}
                 </div>
 
