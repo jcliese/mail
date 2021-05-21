@@ -24,13 +24,13 @@
                     <br>
                     {% if user.is_authenticated %}
                         {% if on_watchlist %}
-                            <form action="{% url 'watchlist' listing.id %}" method="post">
+                            <form action="{% url 'change_watchlist' listing.id %}" method="post">
                                 {% csrf_token %}
                                 <input type="submit" class="btn btn-warning" value="Remove from Watchlist">
                             </form>
                             <br>
                         {% else %}
-                            <form action="{% url 'watchlist' listing.id %}" method="post">
+                            <form action="{% url 'change_watchlist' listing.id %}" method="post">
                                 {% csrf_token %}
                                 <input type="submit" class="btn btn-success" value="Watchlist">
                             </form>

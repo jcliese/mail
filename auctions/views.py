@@ -137,7 +137,7 @@ def listing(request, id):
     return render(request, "auctions/listing.html", {"listing": listing, "on_watchlist": on_watchlist, "bid_form": bid_form, "user": request.user, "numb_bids": len(bids), "comments": comments, "comment_form": comment_form })
 
 @login_required
-def watchlist(request, id):
+def change_watchlist(request, id):
     if request.method=="POST":
         user = User.objects.get(username=request.user.username)
         listing = Listing.objects.get(id=id)
