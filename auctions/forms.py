@@ -32,3 +32,6 @@ class BidForm(forms.Form):
         self.fields["bid_price"] = forms.FloatField(min_value=min_val, widget=forms.NumberInput(attrs={'class': 'form-control', 'name': 'bid_price'}))
 
     bid_price = forms.FloatField()
+
+class CommentForm(forms.Form):
+    comment = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows':'4', 'name': 'comment'}))

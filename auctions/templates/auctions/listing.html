@@ -64,6 +64,31 @@
                             Congratulations! You have won this auction!
                         </div>
                     {% endif %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Comments</h5>
+                            {% if comments %}
+                                {% for comment in comments %}
+                                <hr>
+                                <div class="card-text description"><b><mark>{{comment.user}}:</mark></b></div>
+                                <div class="card-text description">{{comment.comment}}</div>
+                                <br>
+                                <small class="text-muted comment">{{comment.time_sent}}</small>
+                                <hr>
+                                {% endfor %}
+                            {% else %}
+                            <p class="card-text"><em>No comments yet.</em></p>
+                            {% endif %}
+                            {% if user.is_authenticated %}
+                                <form action="{% url 'comment' listing.id %}" method="post">
+                                    {% csrf_token %}
+                                    {{ comment_form.comment }}
+                                    <br>
+                                    <input type="submit" class="btn btn-info" value="Comment">
+                                </form>
+                            {% endif %}                            
+                        </div>
+                      </div>
                 </div>
 
             </div>

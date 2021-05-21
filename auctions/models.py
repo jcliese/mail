@@ -33,13 +33,13 @@ class Bid(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bidder")
     listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
     price = models.FloatField(default=0.0)
-    bid_date = models.DateField(default=timezone.now)
+    bid_date = models.DateTimeField(default=timezone.now)
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commentator")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
     comment = models.TextField()
-    time_sent = models.DateField(default=timezone.now)
+    time_sent = models.DateTimeField(default=timezone.now)
 
 class Watchlist(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlist")

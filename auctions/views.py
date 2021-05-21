@@ -6,8 +6,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import User, Listing, Bid, Watchlist
-from .forms import ImageForm, BidForm
+from .models import User, Listing, Bid, Watchlist, Comment
+from .forms import ImageForm, BidForm, CommentForm
 
 def check_active():
     listings = Listing.objects.all()
@@ -120,9 +120,9 @@ def listing(request, id):
         listing = None
     
     on_watchlist = Watchlist.objects.filter(user_id=request.user.id, listing_id=id).exists()
-    is_creator = Watchlist.objects.filter(user_id=request.user.id, listing_id=id).exists()
 
     bids = Bid.objects.filter(listing_id=listing.id).order_by('-id')
+    comments = Comment.objects.filter(listing_id=listing.id).order_by('-id')
     if bids:
         current_price = bids.values_list('price', flat=True)[0]
         highest_bidder = bids.values_list('user_id', flat=True)[0]
@@ -131,11 +131,10 @@ def listing(request, id):
         highest_bidder = None
     listing.current_price = current_price
     listing.highest_bidder = highest_bidder
-
-    print(listing.highest_bidder)
     
     bid_form = BidForm(listing.min_price)
-    return render(request, "auctions/listing.html", {"listing": listing, "on_watchlist": on_watchlist, "bid_form": bid_form, "user": request.user, "numb_bids": len(bids), })
+    comment_form = CommentForm()
+    return render(request, "auctions/listing.html", {"listing": listing, "on_watchlist": on_watchlist, "bid_form": bid_form, "user": request.user, "numb_bids": len(bids), "comments": comments, "comment_form": comment_form })
 
 @login_required
 def watchlist(request, id):
@@ -164,8 +163,16 @@ def bid(request, id):
 @login_required
 def close(request, id):
     if request.method=="POST":
-        print("i want to close", id)
         listing = Listing.objects.get(id=id)
         listing.is_active = False
         listing.save()
+    return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
+
+@login_required
+def comment(request, id):
+    if request.method=="POST":
+        listing = Listing.objects.get(id=id)
+        comment = request.POST.get("comment")
+        new_comment = Comment(user=request.user, listing=listing, comment=comment)
+        new_comment.save()
     return HttpResponseRedirect(reverse("listing", args=(listing.id,)))
