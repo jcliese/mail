@@ -9,7 +9,8 @@ from django.utils import timezone
 from .models import User, Listing, Bid, Watchlist, Comment
 from .forms import ImageForm, BidForm, CommentForm
 
-def check_active():
+def check_active(request):
+    request.session['watchlist_length'] = len(Watchlist.objects.filter(user_id=request.user))
     listings = Listing.objects.all()
     for listing in listings:
         if listing.time_ending < timezone.now():
@@ -28,7 +29,8 @@ def get_current_price(listings):
     return listings
 
 def index(request):
-    check_active()
+    print(request.session['watchlist_length'])
+    check_active(request)
     listings = Listing.objects.filter(is_active=True)
     listings = listings[::-1]
     listings = get_current_price(listings)
@@ -118,7 +120,7 @@ def new(request):
     return render(request, "auctions/new.html", {'form' : form})
 
 def listing(request, id):
-    check_active()
+    check_active(request)
     try:
         listing = Listing.objects.get(id=id)
     except Listing.DoesNotExist:
@@ -143,7 +145,7 @@ def listing(request, id):
 
 @login_required
 def watchlist(request):
-    check_active()
+    check_active(request)
     watchlist_items = Watchlist.objects.filter(user_id=request.user)
     listings = []
     for item in watchlist_items:

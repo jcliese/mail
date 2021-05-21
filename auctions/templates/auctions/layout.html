@@ -25,7 +25,7 @@
                     <a class="nav-link" href="{% url 'new' %}">Create Listing</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'watchlist' %}">Watchlist</a>
+                    <a class="nav-link" href="{% url 'watchlist' %}">Watchlist <span class="badge badge-secondary">{{ request.session.watchlist_length }}</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
