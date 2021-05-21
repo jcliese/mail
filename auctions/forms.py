@@ -15,6 +15,9 @@ unassigned = "unassigned"
 
 categories = [(books, "Books"), (dvd, "DVD"), (electronics, "Electronics"), (fashion, "Fashion"), (home, "Home"), (office, "Office"), (pet, "Pet"), (shoes, "Shoes"), (software, "Software"), (toys, "Toys"), (unassigned, "Unassigned")]
 
+def all_categories():
+    all_categories = [{'category': category[0], 'name': category[1]} for category in categories]
+    return all_categories
 
 class ImageForm(forms.Form):
     listing_title = forms.CharField(max_length=256, widget=forms.TextInput(attrs={'class': 'form-control'}))

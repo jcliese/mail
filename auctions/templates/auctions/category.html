@@ -1,0 +1,38 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div class="body_wrapper">
+        <h2>{{ category.name }}</h2>
+        {% if listings %}
+            {% for listing in listings %}
+            <a href="{% url 'listing' listing.id %}"">
+            <div class="card">
+                <div class="card-body listing">
+                    {% if listing.imgfile %}
+                        <img src="../media/{{listing.imgfile}}" class="mr-3 listing_img" alt="{{listing.listing_title}}">
+                    {% else %}
+                        <img src="../media/default.png" class="mr-3 listing_img" alt="{{listing.listing_title}}">
+                    {% endif %}
+                    <div class="listing_data">
+                        <h1>{{ listing.listing_title }}</h1>
+                        <p><b>Price:</b> {{ listing.current_price|floatformat:2 }}€</p>
+                        <div class="description">{{listing.description}}</div><br>
+                        <small class="text-muted">Created {{listing.time_starting}}</small>
+                    </div>
+
+                </div>
+            </div>
+            </a>
+            <br>
+            {% endfor %}
+        {% else %}
+        <div class="card">
+            <div class="card-body listing">
+                <div class="alert alert-warning" role="alert">
+                    There are no listings in this category!
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

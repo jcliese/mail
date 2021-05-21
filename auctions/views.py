@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from .models import User, Listing, Bid, Watchlist, Comment
-from .forms import ImageForm, BidForm, CommentForm
+from .forms import ImageForm, BidForm, CommentForm, all_categories
 
 def check_active(request):
     request.session['watchlist_length'] = len(Watchlist.objects.filter(user_id=request.user))
@@ -34,7 +34,7 @@ def index(request):
     listings = Listing.objects.filter(is_active=True)
     listings = listings[::-1]
     listings = get_current_price(listings)
-    
+    print("INDEX", listings)
 
     return render(request, "auctions/index.html", {
         "listings": listings,
@@ -142,6 +142,14 @@ def listing(request, id):
     bid_form = BidForm(listing.min_price)
     comment_form = CommentForm()
     return render(request, "auctions/listing.html", {"listing": listing, "on_watchlist": on_watchlist, "bid_form": bid_form, "user": request.user, "numb_bids": len(bids), "comments": comments, "comment_form": comment_form })
+
+def category(request, cat):
+    check_active(request)
+    listings = Listing.objects.filter(category=cat, is_active=True)
+    listings = listings[::-1]
+    listings = get_current_price(listings)
+    category = next(item for item in all_categories() if item["category"] == cat)
+    return render(request, "auctions/category.html", {"listings": listings, "category": category})
 
 @login_required
 def watchlist(request):
