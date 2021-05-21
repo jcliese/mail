@@ -28,7 +28,7 @@
                     <a class="nav-link" href="{% url 'new' %}">Create Listing</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'watchlist' %}">Watchlist <span class="badge badge-secondary">{{ request.session.watchlist_length }}</span></a>
+                    <a class="nav-link" href="{% url 'watchlist' %}">Watchlist {% if request.session.watchlist_length %}<span class="badge badge-secondary">{{ request.session.watchlist_length }}</span>{% endif %}</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -10,7 +10,9 @@ from .models import User, Listing, Bid, Watchlist, Comment
 from .forms import ImageForm, BidForm, CommentForm, all_categories
 
 def check_active(request):
-    request.session['watchlist_length'] = len(Watchlist.objects.filter(user_id=request.user))
+    print('user', request.user)
+    if not request.user.is_anonymous:
+        request.session['watchlist_length'] = len(Watchlist.objects.filter(user_id=request.user))
     listings = Listing.objects.all()
     for listing in listings:
         if listing.time_ending < timezone.now():
@@ -29,7 +31,6 @@ def get_current_price(listings):
     return listings
 
 def index(request):
-    print(request.session['watchlist_length'])
     check_active(request)
     listings = Listing.objects.filter(is_active=True)
     listings = listings[::-1]
