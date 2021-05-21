@@ -16,10 +16,7 @@ def check_active():
             listing.is_active = False
             listing.save()
 
-def index(request):
-    check_active()
-    listings = Listing.objects.filter(is_active=True)
-    listings = listings[::-1]
+def get_current_price(listings):
     for listing in listings:
         bids = Bid.objects.filter(listing_id=listing.id).values_list('price', flat=True).order_by('-id')
         if bids:
@@ -28,6 +25,14 @@ def index(request):
             current_price = listing.min_price
 
         listing.current_price = current_price
+    return listings
+
+def index(request):
+    check_active()
+    listings = Listing.objects.filter(is_active=True)
+    listings = listings[::-1]
+    listings = get_current_price(listings)
+    
 
     return render(request, "auctions/index.html", {
         "listings": listings,
@@ -135,6 +140,21 @@ def listing(request, id):
     bid_form = BidForm(listing.min_price)
     comment_form = CommentForm()
     return render(request, "auctions/listing.html", {"listing": listing, "on_watchlist": on_watchlist, "bid_form": bid_form, "user": request.user, "numb_bids": len(bids), "comments": comments, "comment_form": comment_form })
+
+@login_required
+def watchlist(request):
+    check_active()
+    watchlist_items = Watchlist.objects.filter(user_id=request.user)
+    listings = []
+    for item in watchlist_items:
+        listing = Listing.objects.get(id=item.listing_id.id)
+        listings.append(listing)
+    listings = listings[::-1]
+    listings = get_current_price(listings)
+
+    return render(request, "auctions/watchlist.html", {
+        "listings": listings
+    })
 
 @login_required
 def change_watchlist(request, id):
