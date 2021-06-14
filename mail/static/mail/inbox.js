@@ -81,6 +81,30 @@ function load_mailbox(mailbox) {
         console.log(emails);
 
         // ... do something else with emails ...
+        const specs = {0: 'sender', 1: 'subject', 2: 'timestamp'}
+        const emails_list = document.getElementById('emails-view');
+        const table = document.createElement('table');
+        table.classList.add('table');
+        const tblBody = document.createElement("tbody");
+        emails.forEach(email =>{
+          const row = document.createElement("tr");
+          for (const value of Object.entries(specs)){
+            const cell = document.createElement("td");
+            const cellText = document.createTextNode(email[value[1]]);
+            console.log('CL', cellText);
+            cell.appendChild(cellText);
+            row.appendChild(cell);
+            if(email.read){
+              row.style.backgroundColor = "lightgray";
+            }
+          }
+          tblBody.appendChild(row);
+        });
+        
+        // put the <tbody> in the <table>
+        table.appendChild(tblBody);
+        // appends <table> into <body>
+        emails_list.appendChild(table);
     });
 
   }
