@@ -15,6 +15,7 @@ function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#detail-view').style.display = 'none';
 
   // get user input
   const submit = document.querySelector('input[type="submit"]');
@@ -66,21 +67,60 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 }
 
+
+//load single view of an email
+function load_detail(){
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#detail-view').style.display = 'block';
+
+  //fetch the data
+  fetch(`/emails/${this.id}`)
+  .then(response => response.json())
+  .then(email => {
+      // Print email
+      console.log(email);
+
+      // ... do something else with email ...
+      const detail = document.getElementById('detail-view');
+      const ul = document.createElement('ul');
+      ul.style.listStyleType = 'none';
+      const sender_li = document.createElement("li");
+      sender_li.innerHTML = `<b>FROM:</b>  ${email.sender}`;
+      const all_recipient_li = document.createElement("li");
+      all_recipient_li.innerHTML = `<b>TO:</b>`;
+      const recipient_ul = document.createElement('ul');
+      recipient_ul.style.listStyleType = 'none';
+      all_recipient_li.appendChild(recipient_ul);
+      email.recipients.forEach( recipient => {
+        const recipient_li = document.createElement("li");
+        recipient_li.innerHTML = `${recipient}`;
+        recipient_ul.appendChild(recipient_li);
+      })
+      ul.appendChild(sender_li);
+      ul.appendChild(all_recipient_li);
+      detail.appendChild(ul);
+  });
+
+
+  //document.querySelector('#detail-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+}
+
 function load_mailbox(mailbox) {
-  
-  // Show the mailbox and hide other views
+
+  // Show the details and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#detail-view').style.display = 'none';
 
+  
   //inbox
   if(mailbox == 'inbox'){
     fetch('/emails/inbox')
     .then(response => response.json())
     .then(emails => {
-        // Print emails
-        console.log(emails);
 
-        // ... do something else with emails ...
+        //list emails in table
         const specs = {0: 'sender', 1: 'subject', 2: 'timestamp'}
         const emails_list = document.getElementById('emails-view');
         const table = document.createElement('table');
@@ -88,16 +128,17 @@ function load_mailbox(mailbox) {
         const tblBody = document.createElement("tbody");
         emails.forEach(email =>{
           const row = document.createElement("tr");
+          row.setAttribute('id', email.id);
           for (const value of Object.entries(specs)){
             const cell = document.createElement("td");
             const cellText = document.createTextNode(email[value[1]]);
-            console.log('CL', cellText);
             cell.appendChild(cellText);
             row.appendChild(cell);
             if(email.read){
               row.style.backgroundColor = "lightgray";
             }
           }
+          row.addEventListener('click', load_detail);
           tblBody.appendChild(row);
         });
         
@@ -106,7 +147,6 @@ function load_mailbox(mailbox) {
         // appends <table> into <body>
         emails_list.appendChild(table);
     });
-
   }
 
   // Show the mailbox name
