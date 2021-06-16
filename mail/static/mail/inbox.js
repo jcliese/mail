@@ -72,23 +72,23 @@ function toggleArchive(email){
         archived: !email.archived
     })
   })
-  load_mailbox('inbox');
+  .then(() => load_mailbox('inbox')
+  )
+  return false;
 }
 
 
 //load single view of an email
-function load_detail(){
+function load_detail(email, mailbox){
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#detail-view').style.display = 'block';
   document.querySelector('#detail-view').innerHTML = '';
 
   //fetch the data
-  fetch(`/emails/${this.id}`)
+  fetch(`/emails/${email.id}`)
   .then(response => response.json())
   .then(email => {
-      // Print email
-      console.log(email);
 
       // ... do something else with email ...
       const detail = document.getElementById('detail-view');
@@ -112,23 +112,25 @@ function load_detail(){
       ul.appendChild(timestamp_li);
       detail.appendChild(ul);
       const hr = document.createElement("hr");
-      const archive = document.createElement("button");
-      archive.type = "button";
-      archive.classList.add('btn', 'btn-outline-info');
-      if (email.archived) {
-        archive.textContent = 'Unarchive';
-      } else {
-        archive.textContent = 'Archive';
+      if (mailbox !== 'sent'){
+        const archive = document.createElement("button");
+        archive.type = "button";
+        archive.classList.add('btn', 'btn-outline-info');
+        if (email.archived) {
+          archive.textContent = 'Unarchive';
+        } else {
+          archive.textContent = 'Archive';
+        }
+        archive.addEventListener('click', () => toggleArchive(email))
+        detail.appendChild(archive);
       }
-      archive.addEventListener('click', () => toggleArchive(email))
-      detail.appendChild(archive);
       detail.appendChild(hr);
       const body = document.createElement("p");
       const body_text = document.createTextNode(email.body);
       body.appendChild(body_text);
       detail.appendChild(body);
   });
-  fetch(`/emails/${this.id}`, {
+  fetch(`/emails/${email.id}`, {
     method: 'PUT',
     body: JSON.stringify({
         read: true
@@ -146,42 +148,40 @@ function load_mailbox(mailbox) {
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#detail-view').style.display = 'none';
+  document.querySelector('#emails-view').innerHTML = '';
 
   
-  //inbox
-  if(mailbox == 'inbox'){
-    fetch('/emails/inbox')
-    .then(response => response.json())
-    .then(emails => {
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(emails => {
 
-        //list emails in table
-        const specs = {0: 'sender', 1: 'subject', 2: 'timestamp'}
-        const emails_list = document.getElementById('emails-view');
-        const table = document.createElement('table');
-        table.classList.add('table');
-        const tblBody = document.createElement("tbody");
-        emails.forEach(email =>{
-          const row = document.createElement("tr");
-          row.setAttribute('id', email.id);
-          for (const value of Object.entries(specs)){
-            const cell = document.createElement("td");
-            const cellText = document.createTextNode(email[value[1]]);
-            cell.appendChild(cellText);
-            row.appendChild(cell);
-            if(email.read){
-              row.style.backgroundColor = "lightgray";
-            }
+      //list emails in table
+      const specs = {0: 'sender', 1: 'subject', 2: 'timestamp'}
+      const emails_list = document.getElementById('emails-view');
+      const table = document.createElement('table');
+      table.classList.add('table');
+      const tblBody = document.createElement("tbody");
+      emails.forEach(email =>{
+        const row = document.createElement("tr");
+        row.setAttribute('id', email.id);
+        for (const value of Object.entries(specs)){
+          const cell = document.createElement("td");
+          const cellText = document.createTextNode(email[value[1]]);
+          cell.appendChild(cellText);
+          row.appendChild(cell);
+          if(email.read){
+            row.style.backgroundColor = "#f2f2f2";
           }
-          row.addEventListener('click', load_detail);
-          tblBody.appendChild(row);
-        });
+        }
+        row.addEventListener('click', () => load_detail(email, mailbox));
+        tblBody.appendChild(row);
+      });
         
         // put the <tbody> in the <table>
         table.appendChild(tblBody);
         // appends <table> into <body>
         emails_list.appendChild(table);
     });
-  }
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
