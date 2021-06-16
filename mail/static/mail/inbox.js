@@ -32,7 +32,6 @@ function compose_email() {
   }
 
   document.querySelector('form').onsubmit = () => {
-    const recipients = mailRecipient.value.split(',');
     const subject = document.querySelector('#compose-subject').value;
     const body = document.querySelector('#compose-body').value;
 
@@ -62,6 +61,18 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
+}
+
+
+//toggle archived of an email
+function toggleArchive(email){  
+  fetch(`/emails/${email.id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: !email.archived
+    })
+  })
+  load_mailbox('inbox');
 }
 
 
@@ -101,12 +112,15 @@ function load_detail(){
       ul.appendChild(timestamp_li);
       detail.appendChild(ul);
       const hr = document.createElement("hr");
-      const archive = document.createElement("button"); 
-      if (email.archive) {
+      const archive = document.createElement("button");
+      archive.type = "button";
+      archive.classList.add('btn', 'btn-outline-info');
+      if (email.archived) {
         archive.textContent = 'Unarchive';
       } else {
         archive.textContent = 'Archive';
       }
+      archive.addEventListener('click', () => toggleArchive(email))
       detail.appendChild(archive);
       detail.appendChild(hr);
       const body = document.createElement("p");
