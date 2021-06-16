@@ -36,26 +36,23 @@ function compose_email() {
     const subject = document.querySelector('#compose-subject').value;
     const body = document.querySelector('#compose-body').value;
 
-    recipients.forEach(recipient => {
-      try {
-        fetch('/emails', {
-          method: 'POST',
-          body: JSON.stringify({
-              recipients: recipient,
-              subject: subject,
-              body: body
-          })
+    try {
+      fetch('/emails', {
+        method: 'POST',
+        body: JSON.stringify({
+            recipients: mailRecipient.value,
+            subject: subject,
+            body: body
         })
-        .then(response => response.json())
-        .then(result => {
-            // Print result
-            console.log(result);
-        })
-      } catch (error){
-          console.log(error)
-        }
-        
-    })
+      })
+      .then(response => response.json())
+      .then(result => {
+          // Print result
+          console.log(result);
+      })
+    } catch (error){
+        console.log(error)
+      }
     submit.disabled = true;
     load_mailbox('sent')
     return false;
@@ -73,6 +70,7 @@ function load_detail(){
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#detail-view').style.display = 'block';
+  document.querySelector('#detail-view').innerHTML = '';
 
   //fetch the data
   fetch(`/emails/${this.id}`)
@@ -87,20 +85,42 @@ function load_detail(){
       ul.style.listStyleType = 'none';
       const sender_li = document.createElement("li");
       sender_li.innerHTML = `<b>FROM:</b>  ${email.sender}`;
-      const all_recipient_li = document.createElement("li");
-      all_recipient_li.innerHTML = `<b>TO:</b>`;
-      const recipient_ul = document.createElement('ul');
-      recipient_ul.style.listStyleType = 'none';
-      all_recipient_li.appendChild(recipient_ul);
+      const recipients_li = document.createElement("li");
+      let recipients = "";
       email.recipients.forEach( recipient => {
-        const recipient_li = document.createElement("li");
-        recipient_li.innerHTML = `${recipient}`;
-        recipient_ul.appendChild(recipient_li);
+        recipients += `${recipient} <br/>`;
       })
+      recipients_li.innerHTML = `<b>TO: </b> ${recipients}`;
+      const subject_li = document.createElement("li");
+      subject_li.innerHTML = `<b>Subject:</b>  ${email.subject}`;
+      const timestamp_li = document.createElement("li");
+      timestamp_li.innerHTML = `<b>Timestamp:</b>  ${email.timestamp}`;
       ul.appendChild(sender_li);
-      ul.appendChild(all_recipient_li);
+      ul.appendChild(recipients_li);
+      ul.appendChild(subject_li);
+      ul.appendChild(timestamp_li);
       detail.appendChild(ul);
+      const hr = document.createElement("hr");
+      const archive = document.createElement("button"); 
+      if (email.archive) {
+        archive.textContent = 'Unarchive';
+      } else {
+        archive.textContent = 'Archive';
+      }
+      detail.appendChild(archive);
+      detail.appendChild(hr);
+      const body = document.createElement("p");
+      const body_text = document.createTextNode(email.body);
+      body.appendChild(body_text);
+      detail.appendChild(body);
   });
+  fetch(`/emails/${this.id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        read: true
+    })
+  })
+  
 
 
   //document.querySelector('#detail-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
