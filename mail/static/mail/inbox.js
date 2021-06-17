@@ -10,7 +10,14 @@ document.addEventListener('DOMContentLoaded', function() {
   load_mailbox('inbox');
 });
 
-function compose_email() {
+function compose_email(email={}) {
+
+  // Clear out composition fields
+  document.querySelector('#compose-recipients').value = '';
+  document.querySelector('#compose-subject').value = '';
+  document.querySelector('#compose-body').value = '';
+
+  console.log("EMAIL", email);
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
@@ -20,9 +27,13 @@ function compose_email() {
   // get user input
   const submit = document.querySelector('input[type="submit"]');
   const mailRecipient = document.querySelector('#compose-recipients');
+  if(email.sender) {
+    mailRecipient.value = email.sender;
+    };
   submit.disabled = true;
 
   mailRecipient.onkeyup = () => {
+    console.log("WORKing")
     if (mailRecipient.value.length > 0) {
         submit.disabled = false;
     }
@@ -57,10 +68,7 @@ function compose_email() {
     return false;
   }
 
-  // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+  return false;
 }
 
 
@@ -90,7 +98,7 @@ function load_detail(email, mailbox){
   .then(response => response.json())
   .then(email => {
 
-      // ... do something else with email ...
+      // show single email
       const detail = document.getElementById('detail-view');
       const ul = document.createElement('ul');
       ul.style.listStyleType = 'none';
@@ -123,6 +131,12 @@ function load_detail(email, mailbox){
         }
         archive.addEventListener('click', () => toggleArchive(email))
         detail.appendChild(archive);
+        const reply = document.createElement("button");
+        reply.type = "button";
+        reply.classList.add('btn', 'btn-outline-info');
+        reply.textContent = 'Reply';
+        reply.addEventListener('click', () => compose_email(email))
+        detail.appendChild(reply);
       }
       detail.appendChild(hr);
       const body = document.createElement("p");
