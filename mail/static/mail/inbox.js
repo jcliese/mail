@@ -190,41 +190,39 @@ function load_mailbox(mailbox) {
   .then(response => response.json())
   .then(emails => {
 
-    console.log(emails);
-
-      //list emails in table
-      let specs = {};
-      if (mailbox !== 'sent'){
-        specs = {0: 'sender', 1: 'subject', 2: 'timestamp'}
-      } else {
-        specs = {0: 'recipients', 1: 'subject', 2: 'timestamp'}
-      }
-      const emails_list = document.getElementById('emails-view');
-      const table = document.createElement('table');
-      table.classList.add('table');
-      const tblBody = document.createElement("tbody");
-      emails.forEach(email =>{
-        const row = document.createElement("tr");
-        row.setAttribute('id', email.id);
-        //iterate over specs
-        for (const value of Object.entries(specs)){
-          const cell = document.createElement("td");
-          const cellText = document.createTextNode(email[value[1]]);
-          cell.appendChild(cellText);
-          row.appendChild(cell);
-          if(email.read){
-            row.style.backgroundColor = "#f2f2f2";
-          }
+    //list emails in table
+    let specs = {};
+    if (mailbox !== 'sent'){
+      specs = {0: 'sender', 1: 'subject', 2: 'timestamp'}
+    } else {
+      specs = {0: 'recipients', 1: 'subject', 2: 'timestamp'}
+    }
+    const emails_list = document.getElementById('emails-view');
+    const table = document.createElement('table');
+    table.classList.add('table');
+    const tblBody = document.createElement("tbody");
+    emails.forEach(email =>{
+      const row = document.createElement("tr");
+      row.setAttribute('id', email.id);
+      //iterate over specs
+      for (const value of Object.entries(specs)){
+        const cell = document.createElement("td");
+        const cellText = document.createTextNode(email[value[1]]);
+        cell.appendChild(cellText);
+        row.appendChild(cell);
+        if(email.read){
+          row.style.backgroundColor = "#f2f2f2";
         }
-        row.addEventListener('click', () => load_detail(email, mailbox));
-        tblBody.appendChild(row);
-      });
-        
-        // put the <tbody> in the <table>
-        table.appendChild(tblBody);
-        // appends <table> into <body>
-        emails_list.appendChild(table);
+      }
+      row.addEventListener('click', () => load_detail(email, mailbox));
+      tblBody.appendChild(row);
     });
+        
+    // put the <tbody> in the <table>
+    table.appendChild(tblBody);
+    // appends <table> into <body>
+    emails_list.appendChild(table);
+});
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
