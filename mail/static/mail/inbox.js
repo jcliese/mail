@@ -164,7 +164,9 @@ function load_detail(email, mailbox){
         detail.appendChild(reply);
       }
       detail.appendChild(hr);
-      const body = document.createElement("p");
+      const body = document.createElement("div");
+      body.style.whiteSpace = 'pre-wrap';
+      console.log(email.body)
       const body_text = document.createTextNode(email.body);
       body.appendChild(body_text);
       detail.appendChild(body);
