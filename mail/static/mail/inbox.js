@@ -15,10 +15,9 @@ function prepopulateForm(email) {
   const mailSubject = document.querySelector('#compose-subject');
   const mailBody = document.querySelector('#compose-body');
   mailRecipient.value = email.sender;
-  const regex = new RegExp('^RE:.*');
+  const regex = new RegExp('^Re:.*');
   if (!regex.test(email.subject)) {
-    console.log("RE not found", email.subject);
-    mailSubject.value = `RE: ${email.subject}`;
+    mailSubject.value = `Re: ${email.subject}`;
   } else{
     mailSubject.value = email.subject;
   }
