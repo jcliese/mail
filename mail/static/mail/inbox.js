@@ -50,7 +50,9 @@ function compose_email(email={}) {
   } else {
     submit.disabled = true;
   }
-  
+  if (mailRecipient.value.length > 0) {
+    submit.disabled = false;
+  }
 
   mailRecipient.onkeyup = () => {
     if (mailRecipient.value.length > 0) {
