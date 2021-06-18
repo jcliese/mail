@@ -54,7 +54,6 @@ function compose_email(email={}) {
   
 
   mailRecipient.onkeyup = () => {
-    console.log("working");
     if (mailRecipient.value.length > 0) {
         submit.disabled = false;
     }
@@ -153,6 +152,7 @@ function load_detail(email, mailbox){
         archive.addEventListener('click', () => toggleArchive(email))
         detail.appendChild(archive);
         const reply = document.createElement("button");
+        reply.style.marginLeft = '10px';
         reply.type = "button";
         reply.classList.add('btn', 'btn-outline-info');
         reply.textContent = 'Reply';
