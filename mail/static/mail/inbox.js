@@ -81,11 +81,13 @@ function compose_email(email={}) {
           // Print result
           console.log(result);
       })
+      .then(
+        () => load_mailbox('sent')
+      )
     } catch (error){
         console.log(error)
       }
     submit.disabled = true;
-    load_mailbox('sent')
     return false;
   }
 
@@ -101,7 +103,8 @@ function toggleArchive(email){
         archived: !email.archived
     })
   })
-  .then(() => load_mailbox('inbox')
+  .then(
+    () => load_mailbox('inbox')
   )
   return false;
 }
