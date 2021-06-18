@@ -190,8 +190,15 @@ function load_mailbox(mailbox) {
   .then(response => response.json())
   .then(emails => {
 
+    console.log(emails);
+
       //list emails in table
-      const specs = {0: 'sender', 1: 'subject', 2: 'timestamp'}
+      let specs = {};
+      if (mailbox !== 'sent'){
+        specs = {0: 'sender', 1: 'subject', 2: 'timestamp'}
+      } else {
+        specs = {0: 'recipients', 1: 'subject', 2: 'timestamp'}
+      }
       const emails_list = document.getElementById('emails-view');
       const table = document.createElement('table');
       table.classList.add('table');
@@ -199,6 +206,7 @@ function load_mailbox(mailbox) {
       emails.forEach(email =>{
         const row = document.createElement("tr");
         row.setAttribute('id', email.id);
+        //iterate over specs
         for (const value of Object.entries(specs)){
           const cell = document.createElement("td");
           const cellText = document.createTextNode(email[value[1]]);
