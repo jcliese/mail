@@ -10,6 +10,27 @@ document.addEventListener('DOMContentLoaded', function() {
   load_mailbox('inbox');
 });
 
+function prepopulateForm(email) {
+  const mailRecipient = document.querySelector('#compose-recipients');
+  const mailSubject = document.querySelector('#compose-subject');
+  const mailBody = document.querySelector('#compose-body');
+  mailRecipient.value = email.sender;
+  const regex = new RegExp('^RE:.*');
+  if (!regex.test(email.subject)) {
+    console.log("RE not found", email.subject);
+    mailSubject.value = `RE: ${email.subject}`;
+  } else{
+    mailSubject.value = email.subject;
+  }
+  mailBody.value = 
+    `---------------------------
+On ${email.timestamp} ${email.sender} wrote:
+
+${email.body}
+----------------------------`;
+  return false;
+}
+
 function compose_email(email={}) {
 
   // Clear out composition fields
@@ -17,23 +38,23 @@ function compose_email(email={}) {
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
 
-  console.log("EMAIL", email);
-
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
   document.querySelector('#detail-view').style.display = 'none';
 
   // get user input
-  const submit = document.querySelector('input[type="submit"]');
   const mailRecipient = document.querySelector('#compose-recipients');
+  const submit = document.querySelector('input[type="submit"]');
   if(email.sender) {
-    mailRecipient.value = email.sender;
-    };
-  submit.disabled = true;
+    prepopulateForm(email);
+  } else {
+    submit.disabled = true;
+  }
+  
 
   mailRecipient.onkeyup = () => {
-    console.log("WORKing")
+    console.log("working");
     if (mailRecipient.value.length > 0) {
         submit.disabled = false;
     }
